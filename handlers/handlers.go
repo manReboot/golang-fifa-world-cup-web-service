@@ -14,7 +14,7 @@ func RootHandler(res http.ResponseWriter, req *http.Request) {
 func ListWinners(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
-	year := req.URL.Query().Get()
+	year := req.URL.Query().Get("year")
 
 	if year == "" {
 
@@ -27,14 +27,17 @@ func ListWinners(res http.ResponseWriter, req *http.Request) {
 
 		res.Write(winners)
 
+	} else {
+		filteredWinners, err := data.ListAllByYear(year)
+
+		if err != nil {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		res.Write(filteredWinners)
+
 	}
-
-	else {
-		data.ListAllByYear(year)
-	}
-
-
-	return
 
 }
 
